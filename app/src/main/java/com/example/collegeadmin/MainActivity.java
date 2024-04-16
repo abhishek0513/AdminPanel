@@ -1,6 +1,7 @@
 package com.example.collegeadmin;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 //import android.widget.Toolbar;
@@ -13,7 +14,14 @@ import com.example.collegeadmin.notice.deleteNoticeActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    CardView muploadNotice, addGalleryImage, addEbook, faculty, deleteNotice;
+    CardView muploadNotice, addGalleryImage, addEbook, faculty, deleteNotice, logout;
+
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +32,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Admin Panel");
 
+
+        sharedPreferences = this.getSharedPreferences("login", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        if (sharedPreferences.getString("isLogin", "false").equals("false")){
+            openLogin();
+        }
+
         muploadNotice.setOnClickListener(this);
         addGalleryImage = findViewById(R.id.addGalleryImage);
         addGalleryImage.setOnClickListener(this);
@@ -33,7 +49,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         deleteNotice = findViewById(R.id.deleteNotice);
         faculty.setOnClickListener(this);
         deleteNotice.setOnClickListener(this);
+        logout = findViewById(R.id.logout);
+        logout.setOnClickListener(this);
 
+    }
+
+    private void openLogin() {
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        finish();
     }
 
     @Override
@@ -57,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else if(view.getId() == R.id.deleteNotice) {
             Intent intent = new Intent(getApplicationContext(), deleteNoticeActivity.class);
             startActivity(intent);
+        }
+        else if(view.getId() == R.id.logout) {
+            editor.putString("isLogin", "false");
+            editor.commit();
+          openLogin();
+
         }
     }
 }
